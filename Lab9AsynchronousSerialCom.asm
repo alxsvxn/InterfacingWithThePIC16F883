@@ -197,12 +197,8 @@ INTERRUPT_HANDLER:
     XORWF PORTB,0
     MOVWF PORTB
     
-    ;CALL TRANSMMIT
-    ;CALL RECEIVE
-    
     BANKSEL PIR1
     BCF PIR1,1    ;Clears TMR2 Interrupt flag
-    ;BCF PIR1,5
     
     MOVF STATUS_SAVE,0	    ;Moves F -> W
     MOVWF STATUS	    ;Restores Status
