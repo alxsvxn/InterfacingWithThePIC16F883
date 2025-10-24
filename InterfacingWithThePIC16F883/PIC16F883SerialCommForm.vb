@@ -1,6 +1,7 @@
 ﻿Imports System.IO.Ports
 Imports System.Windows.Forms.VisualStyles.VisualStyleElement
-
+'Alexis Villagran
+'October 2025
 Public Class PIC16F883SerialCommForm
 
     Private Sub PIC16F883SerialCommForm_Load(sender As Object, e As EventArgs) Handles MyBase.Load
