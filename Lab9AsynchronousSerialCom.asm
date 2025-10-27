@@ -35,6 +35,7 @@
     ;WEIGHTED_BITS EQU 0x22  ;ADC Result From Bits Checked
     TIME EQU 0x23	    ;Stores PULSE WIDTH Delay Value	
     RC_DATA EQU 0x24
+    RC_STATUS EQU 0x25
  ;Asign A Value To A Variable
  
 ; Start Of Program
@@ -96,6 +97,8 @@ Start:
     ;MOVLW 0x41
     ;MOVWF ADCON0    ;Sets Fosc/8, Analog channel to AN0, & Enables ADC
 ;-------------------------------------------------------
+    CLRF RC_STATUS
+    
 ;Asynchronous Transmission
     BSF STATUS,5    ;BANK3
     BSF STATUS,6
@@ -145,6 +148,7 @@ Start:
     MOVLW 0x25
     MOVWF T2CON  ;Sets PreSclr.1:16 & PostSclr.1:5, Turns on TMR2
   
+
     ;CALL TRANSMMIT
 ;----------------------------------------------------------------------   
 
@@ -160,8 +164,9 @@ TRANSMMIT:
 ;RETURN
     
     MOVF RC_DATA,0
+    BANKSEL TXREG
     MOVWF TXREG ;PIN18 RX
-    
+   
     BANKSEL TXSTA
     BTFSS TXSTA,1
     GOTO $-1 
@@ -169,13 +174,45 @@ TRANSMMIT:
 RETURN
     
 RECEIVE:
-       
-    MOVF RCREG,0
-    MOVWF RC_DATA
     
+    MOVF RCREG,0	;Takes Receive data
+    MOVWF RC_DATA	;Lovingly places it into RC_DATA
+    
+    ;IF previous byte was '$', process current as data, then clear the flag
+    BTFSC RC_STATUS,0	;Check if the last byte was a $
+    CALL PROCESS_DATA	;If it was not a $ treat as data
+    
+    ;Now we decide what the 'current' byte is. If '$' set RC_STATUS
+    ;If not '$' explicity clear the flag 
+    MOVF RC_DATA,0	;Gather all avaliable data
+    XORLW 0x24		;Check to see if $
+    BTFSC STATUS,2	;Check ZERO flag, if set = $ from XOR
+    GOTO SAW_DOLLAR
+    
+ NOT_DOLLAR:
+    BCF	RC_STATUS,0	;sets user flag indicating  $$$$
+    RETURN
+    
+SAW_DOLLAR:
+    BSF RC_STATUS,0
     CALL TRANSMMIT
-RETURN
     
+RETURN
+
+PROCESS_DATA:
+    ;Should obly enter if previous byte was '$'
+    MOVF RC_DATA,0
+    CALL TRANSMMIT			;Data magic happens
+    BCF RC_STATUS,0	;When RC_S,0 cleared, ready for new data
+
+    RETURN
+    
+TIMER2_STUFF:
+    NOP
+    NOP
+    BANKSEL PIR1
+    BCF PIR1,1    ;Clears TMR2 Interrupt flag
+ RETURN
 ;----------------------------------------------------------------------
     
 INTERRUPT_HANDLER:
@@ -188,18 +225,18 @@ INTERRUPT_HANDLER:
     BTFSC PIR1,5
     CALL RECEIVE
     
-    BANKSEL PORTB
-    MOVLW 0xFF
-    XORWF PORTB,0
-    MOVWF PORTB
-    
-    BANKSEL PIR1
-    BCF PIR1,1    ;Clears TMR2 Interrupt flag
+    BTFSC PIR1,1
+    CALL TIMER2_STUFF
     
     MOVF STATUS_SAVE,0	    ;Moves F -> W
     MOVWF STATUS	    ;Restores Status
     MOVF W_SAVE,0	    ;Restores W
     
 RETFIE
+    
+;    BANKSEL PORTB
+;    MOVLW 0xFF
+;    XORWF PORTB,0
+;    MOVWF PORTB
 ;----------------------------------------------------------------------    
 END 
