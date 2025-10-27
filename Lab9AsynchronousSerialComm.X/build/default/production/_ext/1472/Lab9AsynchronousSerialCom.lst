@@ -1,7 +1,7 @@
 
 
 Microchip MPLAB XC8 Assembler V3.10 build 20250813170317 
-                                                                                                           Fri Oct 24 13:24:19 2025
+                                                                                                           Mon Oct 27 10:10:26 2025
 
 
      1                           	processor	16F883
@@ -2061,179 +2061,199 @@ Microchip MPLAB XC8 Assembler V3.10 build 20250813170317
   2055                           ;MOVLW 0x41
   2056                           ;MOVWF ADCON0 ;Sets Fosc/8, Analog channel to AN0, & Enables ADC
   2057                           ;-------------------------------------------------------
-  2058                           ;Asynchronous Transmission
-  2059     001F  1683               	bsf	3,5	;BANK3
-  2060     0020  1703               	bsf	3,6
-  2061     0021  0187               	clrf	391
-  2062     0022  1303               	bcf	3,6	;BANK1
-  2063                           
-  2064                           ;MOVLW 0x1A
-  2065                           ;MOVWF PIE1 ;0001|1010 ((PIE1) and 07Fh), 5 & ((PIE1) and 07Fh), 4 Int. Enable Bits & TIMRIF
-  2066     0023  300C               	movlw	12
-  2067     0024  0099               	movwf	153	;0000|1100 Decimal 12(calculated SPBRG)
-  2068     0025  019A               	clrf	154
-  2069     0026  3040               	movlw	64
-  2070     0027  0087               	movwf	135	;0100|0000 Makes Bit6 an Output(TX)
-  2071     0028  3020               	movlw	32
-  2072     0029  0098               	movwf	152	;0010|0000
-  2073                           
-  2074                           ;Bit 5 = ((TXSTA) and 07Fh), 5 (Transmit Enable Bit)
-  2075                           ;Bit 2 = ((TXSTA) and 07Fh), 2 (High Baud Rate Elect Bit)
-  2076                           ;Bit 1 = ((TXSTA) and 07Fh), 1 (Transmit Shft. Reg. Status Bit, Empty = 1)
-  2077     002A  1283               	bcf	3,5	;Bank0
-  2078     002B  1798               	bsf	24,7	;Serial Port Enable Bit
-  2079                           
-  2080                           ;Configures RX/DT(Pin 18) & TX/CK(Pin 17) as serial ports
-  2081     002C  1618               	bsf	24,4
-  2082                           
-  2083                           ;---------------------------------------------------------
-  2084                           ;Timer2
-  2085     002D  018C               	clrf	12
-  2086     002E  0191               	clrf	17
-  2087     002F  0192               	clrf	18	;INIT ALL 0's on Startup
-  2088     0030  1683               	bsf	3,5
-  2089     0031  3020               	movlw	32	;2
-  2090     0032  008C               	movwf	140	;Enable TMR2 INT Flag
-  2091     0033  120C               	bcf	140,4
-  2092     0034  30FF               	movlw	255
-  2093     0035  0092               	movwf	146	;Sets TMR2 to compare to max count
-  2094     0036  30C0               	movlw	192
-  2095     0037  008B               	movwf	11
-  2096     0038  1283               	bcf	3,5
-  2097     0039  3025               	movlw	37
-  2098     003A  0092               	movwf	18	;Sets PreSclr.1:16 & PostSclr.1:5, Turns on TMR2
-  2099     003B                     MAIN:	
-  2100                           ;CALL TRANSMMIT
-  2101                           ;----------------------------------------------------------------------
-  2102                           
-  2103     003B  0000               	nop
-  2104     003C  0000               	nop
-  2105     003D  0000               	nop
-  2106     003E  0000               	nop
-  2107     003F  283B               	goto	MAIN
-  2108     0040                     TRANSMMIT:	
-  2109                           ;----------------------------------------------------------------------
-  2110                           
-  2111                           
-  2112                           ;BTFSS PORTB,0
-  2113                           ;RETURN
-  2114     0040  0824               	movf	36,w
-  2115     0041  0099               	movwf	25	;PIN18 RX
-  2116     0042  1303 1683          	banksel	152
-  2117     0044  1C98               	btfss	152,1
-  2118     0045  2807               	goto	($+-1)
-  2119     0046  0008               	return
-  2120     0047                     RECEIVE:
-  2121     0047  081A               	movf	26,w
-  2122     0048  00A4               	movwf	36
-  2123                           
-  2124                           ;MOVF RCREG,0
-  2125                           ;XORWF 0x24
-  2126                           ;BTFSC STATUS,2
-  2127     0049  2040               	call	TRANSMMIT
-  2128     004A  0008               	return
-  2129     004B                     INTERRUPT_HANDLER:	
-  2130                           ;----------------------------------------------------------------------
-  2131                           
-  2132     004B  00A0               	movwf	32
-  2133     004C  0803               	movf	3,w
-  2134     004D  00A1               	movwf	33	;Saving our location when interrupted
-  2135     004E  1303 1283          	banksel	12
-  2136     0050  1A8C               	btfsc	12,5
-  2137     0051  2047               	call	RECEIVE
-  2138     0052  1303 1283          	banksel	6
-  2139     0054  30FF               	movlw	255
-  2140     0055  0606               	xorwf	6,w
-  2141     0056  0086               	movwf	6
-  2142                           
-  2143                           ;CALL TRANSMMIT
-  2144                           ;CALL RECEIVE
-  2145     0057  1303 1283          	banksel	12
-  2146     0059  108C               	bcf	12,1	;Clears TMR2 Interrupt flag
-  2147                           
-  2148                           ;BCF PIR1,5
-  2149     005A  0821               	movf	33,w	;Moves F -> W
-  2150     005B  0083               	movwf	3	;Restores Status
-  2151     005C  0820               	movf	32,w	;Restores W
-  2152     005D  0009               	retfie
-  2153                           
-  2154                           	psect	edata
-  2155     0000                     stk_offset      set	0
-  2156     0000                     auto_size       set	0
-  2157                           
-  2158                           ; stack_auto defines a symbol /name/_offset which equates to the
-  2159                           ; stack offset of the auto object in question
-  2160     0000                     
-  2161                           ; stack_param defines a symbol /name/_offset which equates to the
-  2162                           ; stack offset of the parameter object in question
-  2163     0000                     
-  2164                           ; alloc_stack adjusts the SP to allocate space for auto objects
-  2165                           ; it also links in to the btemp symbol so that can be used
-  2166     0000                     
-  2167                           ; restore_stack adjusts the SP to remove all auto and parameter
-  2168                           ; objects from the stack prior to returning from a function
-  2169     0000                     
-  2170                           ; Include Statements
-  2171                           ; Code Section
-  2172                           ;-------------------------------------------------------------------------------
-  2173                           ; Register/Variable Setup
-  2174     0020                     W_SAVE          equ	32	;General Purpouse register for saving values during interrupt
-  2175     0021                     STATUS_SAVE     equ	33	;General Purpouse register for saving values during interrupt
+  2058     001F  01A5               	clrf	37
+  2059                           
+  2060                           ;Asynchronous Transmission
+  2061     0020  1683               	bsf	3,5	;BANK3
+  2062     0021  1703               	bsf	3,6
+  2063     0022  0187               	clrf	391
+  2064     0023  1303               	bcf	3,6	;BANK1
+  2065                           
+  2066                           ;MOVLW 0x1A
+  2067                           ;MOVWF PIE1 ;0001|1010 ((PIE1) and 07Fh), 5 & ((PIE1) and 07Fh), 4 Int. Enable Bits & TIMRIF
+  2068     0024  300C               	movlw	12
+  2069     0025  0099               	movwf	153	;0000|1100 Decimal 12(calculated SPBRG)
+  2070     0026  019A               	clrf	154
+  2071     0027  3040               	movlw	64
+  2072     0028  0087               	movwf	135	;0100|0000 Makes Bit6 an Output(TX)
+  2073     0029  3020               	movlw	32
+  2074     002A  0098               	movwf	152	;0010|0000
+  2075                           
+  2076                           ;Bit 5 = ((TXSTA) and 07Fh), 5 (Transmit Enable Bit)
+  2077                           ;Bit 2 = ((TXSTA) and 07Fh), 2 (High Baud Rate Elect Bit)
+  2078                           ;Bit 1 = ((TXSTA) and 07Fh), 1 (Transmit Shft. Reg. Status Bit, Empty = 1)
+  2079     002B  1283               	bcf	3,5	;Bank0
+  2080     002C  1798               	bsf	24,7	;Serial Port Enable Bit
+  2081                           
+  2082                           ;Configures RX/DT(Pin 18) & TX/CK(Pin 17) as serial ports
+  2083     002D  1618               	bsf	24,4
+  2084                           
+  2085                           ;---------------------------------------------------------
+  2086                           ;Timer2
+  2087     002E  018C               	clrf	12
+  2088     002F  0191               	clrf	17
+  2089     0030  0192               	clrf	18	;INIT ALL 0's on Startup
+  2090     0031  1683               	bsf	3,5
+  2091     0032  3020               	movlw	32	;2
+  2092     0033  008C               	movwf	140	;Enable TMR2 INT Flag
+  2093     0034  120C               	bcf	140,4
+  2094     0035  30FF               	movlw	255
+  2095     0036  0092               	movwf	146	;Sets TMR2 to compare to max count
+  2096     0037  30C0               	movlw	192
+  2097     0038  008B               	movwf	11
+  2098     0039  1283               	bcf	3,5
+  2099     003A  3025               	movlw	37
+  2100     003B  0092               	movwf	18	;Sets PreSclr.1:16 & PostSclr.1:5, Turns on TMR2
+  2101     003C                     MAIN:	
+  2102                           ;CALL TRANSMMIT
+  2103                           ;----------------------------------------------------------------------
+  2104                           
+  2105     003C  0000               	nop
+  2106     003D  0000               	nop
+  2107     003E  0000               	nop
+  2108     003F  0000               	nop
+  2109     0040  283C               	goto	MAIN
+  2110     0041                     TRANSMMIT:	
+  2111                           ;----------------------------------------------------------------------
+  2112                           
+  2113                           
+  2114                           ;BTFSS PORTB,0
+  2115                           ;RETURN
+  2116     0041  0824               	movf	36,w
+  2117     0042  1303 1283          	banksel	25
+  2118     0044  0099               	movwf	25	;PIN18 RX
+  2119     0045  1303 1683          	banksel	152
+  2120     0047  1C98               	btfss	152,1
+  2121     0048  2807               	goto	($+-1)
+  2122     0049  0008               	return
+  2123     004A                     RECEIVE:
+  2124     004A  081A               	movf	26,w	;Takes Receive data
+  2125     004B  00A4               	movwf	36	;Lovingly places it into RC_DATA
+  2126                           
+  2127                           ;IF previous byte was '$', process current as data, then clear the flag
+  2128     004C  1825               	btfsc	37,0	;Check if the last byte was a $
+  2129     004D  2057               	call	PROCESS_DATA	;If it was not a $ treat as data
+  2130                           
+  2131                           ;Now we decide what the 'current' byte is. If '$' set RC_STATUS
+  2132                           ;If not '$' explicity clear the flag
+  2133     004E  0824               	movf	36,w	;Gather all avaliable data
+  2134     004F  3A24               	xorlw	36	;Check to see if $
+  2135     0050  1903               	btfsc	3,2	;Check ((STATUS) and 07Fh), 2 flag, if set = $ from XOR
+  2136     0051  2854               	goto	SAW_DOLLAR
+  2137     0052                     NOT_DOLLAR:
+  2138     0052  1025               	bcf	37,0	;sets user flag indicating $$$$
+  2139     0053  0008               	return
+  2140     0054                     SAW_DOLLAR:
+  2141     0054  1425               	bsf	37,0
+  2142     0055  2041               	call	TRANSMMIT
+  2143     0056  0008               	return
+  2144     0057                     PROCESS_DATA:
+  2145                           
+  2146                           ;Should obly enter if previous byte was '$'
+  2147     0057  0824               	movf	36,w
+  2148     0058  2041               	call	TRANSMMIT	;Data magic happens
+  2149     0059  1025               	bcf	37,0	;When RC_S,0 cleared, ready for new data
+  2150     005A  0008               	return
+  2151     005B                     TIMER2_STUFF:
+  2152     005B  0000               	nop
+  2153     005C  0000               	nop
+  2154     005D  1303 1283          	banksel	12
+  2155     005F  108C               	bcf	12,1	;Clears TMR2 Interrupt flag
+  2156     0060  0008               	return
+  2157     0061                     INTERRUPT_HANDLER:	
+  2158                           ;----------------------------------------------------------------------
+  2159                           
+  2160     0061  00A0               	movwf	32
+  2161     0062  0803               	movf	3,w
+  2162     0063  00A1               	movwf	33	;Saving our location when interrupted
+  2163     0064  1303 1283          	banksel	12
+  2164     0066  1A8C               	btfsc	12,5
+  2165     0067  204A               	call	RECEIVE
+  2166     0068  188C               	btfsc	12,1
+  2167     0069  205B               	call	TIMER2_STUFF
+  2168     006A  0821               	movf	33,w	;Moves F -> W
+  2169     006B  0083               	movwf	3	;Restores Status
+  2170     006C  0820               	movf	32,w	;Restores W
+  2171     006D  0009               	retfie
+  2172                           
+  2173                           	psect	edata
+  2174     0000                     stk_offset      set	0
+  2175     0000                     auto_size       set	0
   2176                           
-  2177                           ;WEIGHTED_BITS EQU 0x22 ;ADC Result From Bits Checked
-  2178     0023                     TIME            equ	35	;Stores PULSE WIDTH Delay Value
-  2179     0024                     RC_DATA         equ	36	;Reset Vector Adress
-  2180                           
-  2181                           	psect	resetVect
-  2182                           
-  2183                           ;Asign A Value To A Variable
-  2184                           ; Start Of Program
-  2185     0000  2808               	goto	Start
-  2186                           
-  2187                           	psect	isrVect
-  2188     0004  284B               	goto	INTERRUPT_HANDLER
-  2189                           
-  2190                           	psect	config
-  2191                           
-  2192                           ;Config register CONFIG1 @ 0x2007
-  2193                           ;	Oscillator Selection bits
-  2194                           ;	FOSC = HS, HS oscillator: High-speed crystal/resonator on RA6/OSC2/CLKOUT and RA7/OSC1/CLKIN
-  2195                           ;	Watchdog Timer Enable bit
-  2196                           ;	WDTE = OFF, WDT disabled and can be enabled by SWDTEN bit of the WDTCON register
-  2197                           ;	Power-up Timer Enable bit
-  2198                           ;	PWRTE = OFF, PWRT disabled
-  2199                           ;	RE3/MCLR pin function select bit
-  2200                           ;	MCLRE = ON, RE3/MCLR pin function is MCLR
-  2201                           ;	Code Protection bit
-  2202                           ;	CP = OFF, Program memory code protection is disabled
-  2203                           ;	Data Code Protection bit
-  2204                           ;	CPD = OFF, Data memory code protection is disabled
-  2205                           ;	Brown Out Reset Selection bits
-  2206                           ;	BOREN = OFF, BOR disabled
-  2207                           ;	Internal External Switchover bit
-  2208                           ;	IESO = OFF, Internal/External Switchover mode is disabled
-  2209                           ;	Fail-Safe Clock Monitor Enabled bit
-  2210                           ;	FCMEN = OFF, Fail-Safe Clock Monitor is disabled
-  2211                           ;	Low Voltage Programming Enable bit
-  2212                           ;	LVP = OFF, RB3 pin has digital I/O, HV on MCLR must be used for programming
-  2213                           ;	In-Circuit Debugger Mode bit
-  2214                           ;	DEBUG = 0x1, unprogrammed default
-  2215     2007                     	org	8199
-  2216     2007  20F2               	dw	8434
-  2217                           
-  2218                           ;Config register CONFIG2 @ 0x2008
-  2219                           ;	Brown-out Reset Selection bit
-  2220                           ;	BOR4V = BOR40V, Brown-out Reset set to 4.0V
-  2221                           ;	Flash Program Memory Self Write Enable bits
-  2222                           ;	WRT = OFF, Write protection off
-  2223     2008                     	org	8200
-  2224     2008  3FFF               	dw	16383
+  2177                           ; stack_auto defines a symbol /name/_offset which equates to the
+  2178                           ; stack offset of the auto object in question
+  2179     0000                     
+  2180                           ; stack_param defines a symbol /name/_offset which equates to the
+  2181                           ; stack offset of the parameter object in question
+  2182     0000                     
+  2183                           ; alloc_stack adjusts the SP to allocate space for auto objects
+  2184                           ; it also links in to the btemp symbol so that can be used
+  2185     0000                     
+  2186                           ; restore_stack adjusts the SP to remove all auto and parameter
+  2187                           ; objects from the stack prior to returning from a function
+  2188     0000                     
+  2189                           ; Include Statements
+  2190                           ; Code Section
+  2191                           ;-------------------------------------------------------------------------------
+  2192                           ; Register/Variable Setup
+  2193     0020                     W_SAVE          equ	32	;General Purpouse register for saving values during interrupt
+  2194     0021                     STATUS_SAVE     equ	33	;General Purpouse register for saving values during interrupt
+  2195                           
+  2196                           ;WEIGHTED_BITS EQU 0x22 ;ADC Result From Bits Checked
+  2197     0023                     TIME            equ	35	;Stores PULSE WIDTH Delay Value
+  2198     0024                     RC_DATA         equ	36
+  2199     0025                     RC_STATUS       equ	37	;Reset Vector Adress
+  2200                           
+  2201                           	psect	resetVect
+  2202                           
+  2203                           ;Asign A Value To A Variable
+  2204                           ; Start Of Program
+  2205     0000  2808               	goto	Start
+  2206                           
+  2207                           	psect	isrVect
+  2208     0004  2861               	goto	INTERRUPT_HANDLER
+  2209                           
+  2210                           	psect	config
+  2211                           
+  2212                           ;Config register CONFIG1 @ 0x2007
+  2213                           ;	Oscillator Selection bits
+  2214                           ;	FOSC = HS, HS oscillator: High-speed crystal/resonator on RA6/OSC2/CLKOUT and RA7/OSC1/CLKIN
+  2215                           ;	Watchdog Timer Enable bit
+  2216                           ;	WDTE = OFF, WDT disabled and can be enabled by SWDTEN bit of the WDTCON register
+  2217                           ;	Power-up Timer Enable bit
+  2218                           ;	PWRTE = OFF, PWRT disabled
+  2219                           ;	RE3/MCLR pin function select bit
+  2220                           ;	MCLRE = ON, RE3/MCLR pin function is MCLR
+  2221                           ;	Code Protection bit
+  2222                           ;	CP = OFF, Program memory code protection is disabled
+  2223                           ;	Data Code Protection bit
+  2224                           ;	CPD = OFF, Data memory code protection is disabled
+  2225                           ;	Brown Out Reset Selection bits
+  2226                           ;	BOREN = OFF, BOR disabled
+  2227                           ;	Internal External Switchover bit
+  2228                           ;	IESO = OFF, Internal/External Switchover mode is disabled
+  2229                           ;	Fail-Safe Clock Monitor Enabled bit
+  2230                           ;	FCMEN = OFF, Fail-Safe Clock Monitor is disabled
+  2231                           ;	Low Voltage Programming Enable bit
+  2232                           ;	LVP = OFF, RB3 pin has digital I/O, HV on MCLR must be used for programming
+  2233                           ;	In-Circuit Debugger Mode bit
+  2234                           ;	DEBUG = 0x1, unprogrammed default
+  2235     2007                     	org	8199
+  2236     2007  20F2               	dw	8434
+  2237                           
+  2238                           ;Config register CONFIG2 @ 0x2008
+  2239                           ;	Brown-out Reset Selection bit
+  2240                           ;	BOR4V = BOR40V, Brown-out Reset set to 4.0V
+  2241                           ;	Flash Program Memory Self Write Enable bits
+  2242                           ;	WRT = OFF, Write protection off
+  2243     2008                     	org	8200
+  2244     2008  3FFF               	dw	16383
 
 
 Microchip Technology PIC Macro Assembler V3.10 build 20250813170317 
-Symbol Table                                                                                               Fri Oct 24 13:24:19 2025
+Symbol Table                                                                                               Mon Oct 27 10:10:26 2025
 
-                          PR2 0092                           MAIN 003B                           IOCB 0096  
+                          PR2 0092                           MAIN 003C                           IOCB 0096  
                          PIE1 008C                           PIR1 000C                           TMR2 0011  
                         ANSEL 0188                          T1CON 0010                          T2CON 0012  
                         RCREG 001A                          RCSTA 0018                          SPBRG 0099  
@@ -2244,5 +2264,7 @@ Symbol Table                                                                    
                        STATUS 0003                         SSPCON 0014                         W_SAVE 0020  
                       CM1CON0 0107                        CM2CON0 0108                        CCP1CON 0017  
                       CM2CON1 0109                        CCP2CON 001D                        BAUDCTL 0187  
-                      RECEIVE 0047                        RC_DATA 0024                        PSTRCON 009D  
-            INTERRUPT_HANDLER 004B                      TRANSMMIT 0040                    STATUS_SAVE 0021  
+                      RECEIVE 004A                        RC_DATA 0024                        PSTRCON 009D  
+                   SAW_DOLLAR 0054                   TIMER2_STUFF 005B                     NOT_DOLLAR 0052  
+                 PROCESS_DATA 0057              INTERRUPT_HANDLER 0061                      RC_STATUS 0025  
+                    TRANSMMIT 0041                    STATUS_SAVE 0021  
