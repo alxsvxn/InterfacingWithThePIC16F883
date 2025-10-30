@@ -44,6 +44,18 @@ Partial Class PIC16F883SerialCommForm
         Me.Label6 = New System.Windows.Forms.Label()
         Me.Label7 = New System.Windows.Forms.Label()
         Me.Label8 = New System.Windows.Forms.Label()
+        Me.ADCTimer = New System.Windows.Forms.Timer(Me.components)
+        Me.ADCTextBox = New System.Windows.Forms.TextBox()
+        Me.Label9 = New System.Windows.Forms.Label()
+        Me.ADCCheckBox = New System.Windows.Forms.CheckBox()
+        Me.HighByteTextBox = New System.Windows.Forms.TextBox()
+        Me.LowByteTextBox = New System.Windows.Forms.TextBox()
+        Me.Label10 = New System.Windows.Forms.Label()
+        Me.Label11 = New System.Windows.Forms.Label()
+        Me.ReadTimer = New System.Windows.Forms.Timer(Me.components)
+        Me.CmdTextBox = New System.Windows.Forms.TextBox()
+        Me.Label12 = New System.Windows.Forms.Label()
+        Me.ClearButton = New System.Windows.Forms.Button()
         CType(Me.PositionTrackBar, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -56,14 +68,14 @@ Partial Class PIC16F883SerialCommForm
         Me.HexTextBox.Location = New System.Drawing.Point(8, 75)
         Me.HexTextBox.Multiline = True
         Me.HexTextBox.Name = "HexTextBox"
-        Me.HexTextBox.Size = New System.Drawing.Size(99, 302)
+        Me.HexTextBox.Size = New System.Drawing.Size(99, 275)
         Me.HexTextBox.TabIndex = 0
         '
         'ConnectButton
         '
         Me.ConnectButton.Location = New System.Drawing.Point(127, 12)
         Me.ConnectButton.Name = "ConnectButton"
-        Me.ConnectButton.Size = New System.Drawing.Size(75, 23)
+        Me.ConnectButton.Size = New System.Drawing.Size(83, 23)
         Me.ConnectButton.TabIndex = 1
         Me.ConnectButton.Text = "CONNECT"
         Me.ConnectButton.UseVisualStyleBackColor = True
@@ -71,7 +83,7 @@ Partial Class PIC16F883SerialCommForm
         'Label1
         '
         Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(43, 380)
+        Me.Label1.Location = New System.Drawing.Point(44, 353)
         Me.Label1.Name = "Label1"
         Me.Label1.Size = New System.Drawing.Size(29, 13)
         Me.Label1.TabIndex = 2
@@ -80,7 +92,7 @@ Partial Class PIC16F883SerialCommForm
         'Label2
         '
         Me.Label2.AutoSize = True
-        Me.Label2.Location = New System.Drawing.Point(146, 380)
+        Me.Label2.Location = New System.Drawing.Point(147, 353)
         Me.Label2.Name = "Label2"
         Me.Label2.Size = New System.Drawing.Size(34, 13)
         Me.Label2.TabIndex = 4
@@ -91,13 +103,13 @@ Partial Class PIC16F883SerialCommForm
         Me.AsciiTextBox.Location = New System.Drawing.Point(112, 75)
         Me.AsciiTextBox.Multiline = True
         Me.AsciiTextBox.Name = "AsciiTextBox"
-        Me.AsciiTextBox.Size = New System.Drawing.Size(103, 302)
+        Me.AsciiTextBox.Size = New System.Drawing.Size(103, 275)
         Me.AsciiTextBox.TabIndex = 3
         '
         'Label3
         '
         Me.Label3.AutoSize = True
-        Me.Label3.Location = New System.Drawing.Point(249, 380)
+        Me.Label3.Location = New System.Drawing.Point(250, 353)
         Me.Label3.Name = "Label3"
         Me.Label3.Size = New System.Drawing.Size(47, 13)
         Me.Label3.TabIndex = 6
@@ -108,19 +120,20 @@ Partial Class PIC16F883SerialCommForm
         Me.BinaryTextBox.Location = New System.Drawing.Point(220, 75)
         Me.BinaryTextBox.Multiline = True
         Me.BinaryTextBox.Name = "BinaryTextBox"
-        Me.BinaryTextBox.Size = New System.Drawing.Size(105, 302)
+        Me.BinaryTextBox.Size = New System.Drawing.Size(105, 275)
         Me.BinaryTextBox.TabIndex = 5
         '
         'PositionTrackBar
         '
-        Me.PositionTrackBar.Location = New System.Drawing.Point(167, 405)
+        Me.PositionTrackBar.Location = New System.Drawing.Point(8, 383)
+        Me.PositionTrackBar.Maximum = 20
         Me.PositionTrackBar.Name = "PositionTrackBar"
-        Me.PositionTrackBar.Size = New System.Drawing.Size(478, 45)
+        Me.PositionTrackBar.Size = New System.Drawing.Size(317, 45)
         Me.PositionTrackBar.TabIndex = 16
         '
         'DataSentTextBox
         '
-        Me.DataSentTextBox.Location = New System.Drawing.Point(333, 450)
+        Me.DataSentTextBox.Location = New System.Drawing.Point(105, 446)
         Me.DataSentTextBox.Multiline = True
         Me.DataSentTextBox.Name = "DataSentTextBox"
         Me.DataSentTextBox.Size = New System.Drawing.Size(138, 25)
@@ -136,35 +149,35 @@ Partial Class PIC16F883SerialCommForm
         '
         'CloseButton
         '
-        Me.CloseButton.Location = New System.Drawing.Point(666, 405)
+        Me.CloseButton.Location = New System.Drawing.Point(692, 437)
         Me.CloseButton.Name = "CloseButton"
-        Me.CloseButton.Size = New System.Drawing.Size(75, 23)
+        Me.CloseButton.Size = New System.Drawing.Size(98, 45)
         Me.CloseButton.TabIndex = 20
         Me.CloseButton.Text = "Close"
         Me.CloseButton.UseVisualStyleBackColor = True
         '
         'HexReadTextBox
         '
-        Me.HexReadTextBox.Location = New System.Drawing.Point(499, 75)
+        Me.HexReadTextBox.Location = New System.Drawing.Point(376, 75)
         Me.HexReadTextBox.Multiline = True
         Me.HexReadTextBox.Name = "HexReadTextBox"
-        Me.HexReadTextBox.Size = New System.Drawing.Size(98, 302)
+        Me.HexReadTextBox.Size = New System.Drawing.Size(98, 275)
         Me.HexReadTextBox.TabIndex = 21
         '
         'AsciiReadTextBox
         '
-        Me.AsciiReadTextBox.Location = New System.Drawing.Point(603, 75)
+        Me.AsciiReadTextBox.Location = New System.Drawing.Point(480, 75)
         Me.AsciiReadTextBox.Multiline = True
         Me.AsciiReadTextBox.Name = "AsciiReadTextBox"
-        Me.AsciiReadTextBox.Size = New System.Drawing.Size(98, 302)
+        Me.AsciiReadTextBox.Size = New System.Drawing.Size(98, 275)
         Me.AsciiReadTextBox.TabIndex = 22
         '
         'BinaryReadTextBox
         '
-        Me.BinaryReadTextBox.Location = New System.Drawing.Point(707, 75)
+        Me.BinaryReadTextBox.Location = New System.Drawing.Point(584, 75)
         Me.BinaryReadTextBox.Multiline = True
         Me.BinaryReadTextBox.Name = "BinaryReadTextBox"
-        Me.BinaryReadTextBox.Size = New System.Drawing.Size(98, 302)
+        Me.BinaryReadTextBox.Size = New System.Drawing.Size(105, 275)
         Me.BinaryReadTextBox.TabIndex = 23
         '
         'Label4
@@ -181,7 +194,7 @@ Partial Class PIC16F883SerialCommForm
         '
         Me.Label5.AutoSize = True
         Me.Label5.Font = New System.Drawing.Font("Microsoft Sans Serif", 15.0!)
-        Me.Label5.Location = New System.Drawing.Point(568, 47)
+        Me.Label5.Location = New System.Drawing.Point(496, 47)
         Me.Label5.Name = "Label5"
         Me.Label5.Size = New System.Drawing.Size(172, 25)
         Me.Label5.TabIndex = 25
@@ -190,7 +203,7 @@ Partial Class PIC16F883SerialCommForm
         'Label6
         '
         Me.Label6.AutoSize = True
-        Me.Label6.Location = New System.Drawing.Point(534, 380)
+        Me.Label6.Location = New System.Drawing.Point(409, 353)
         Me.Label6.Name = "Label6"
         Me.Label6.Size = New System.Drawing.Size(29, 13)
         Me.Label6.TabIndex = 26
@@ -199,7 +212,7 @@ Partial Class PIC16F883SerialCommForm
         'Label7
         '
         Me.Label7.AutoSize = True
-        Me.Label7.Location = New System.Drawing.Point(638, 380)
+        Me.Label7.Location = New System.Drawing.Point(513, 353)
         Me.Label7.Name = "Label7"
         Me.Label7.Size = New System.Drawing.Size(34, 13)
         Me.Label7.TabIndex = 27
@@ -208,17 +221,119 @@ Partial Class PIC16F883SerialCommForm
         'Label8
         '
         Me.Label8.AutoSize = True
-        Me.Label8.Location = New System.Drawing.Point(736, 380)
+        Me.Label8.Location = New System.Drawing.Point(611, 353)
         Me.Label8.Name = "Label8"
         Me.Label8.Size = New System.Drawing.Size(47, 13)
         Me.Label8.TabIndex = 28
         Me.Label8.Text = "BINARY"
         '
+        'ADCTimer
+        '
+        '
+        'ADCTextBox
+        '
+        Me.ADCTextBox.Location = New System.Drawing.Point(692, 198)
+        Me.ADCTextBox.Multiline = True
+        Me.ADCTextBox.Name = "ADCTextBox"
+        Me.ADCTextBox.Size = New System.Drawing.Size(105, 152)
+        Me.ADCTextBox.TabIndex = 29
+        '
+        'Label9
+        '
+        Me.Label9.AutoSize = True
+        Me.Label9.Location = New System.Drawing.Point(734, 353)
+        Me.Label9.Name = "Label9"
+        Me.Label9.Size = New System.Drawing.Size(29, 13)
+        Me.Label9.TabIndex = 30
+        Me.Label9.Text = "ADC"
+        '
+        'ADCCheckBox
+        '
+        Me.ADCCheckBox.AutoSize = True
+        Me.ADCCheckBox.Location = New System.Drawing.Point(715, 383)
+        Me.ADCCheckBox.Name = "ADCCheckBox"
+        Me.ADCCheckBox.Size = New System.Drawing.Size(48, 17)
+        Me.ADCCheckBox.TabIndex = 31
+        Me.ADCCheckBox.Text = "ADC"
+        Me.ADCCheckBox.UseVisualStyleBackColor = True
+        '
+        'HighByteTextBox
+        '
+        Me.HighByteTextBox.Location = New System.Drawing.Point(692, 116)
+        Me.HighByteTextBox.Multiline = True
+        Me.HighByteTextBox.Name = "HighByteTextBox"
+        Me.HighByteTextBox.Size = New System.Drawing.Size(105, 22)
+        Me.HighByteTextBox.TabIndex = 32
+        '
+        'LowByteTextBox
+        '
+        Me.LowByteTextBox.Location = New System.Drawing.Point(692, 157)
+        Me.LowByteTextBox.Multiline = True
+        Me.LowByteTextBox.Name = "LowByteTextBox"
+        Me.LowByteTextBox.Size = New System.Drawing.Size(105, 22)
+        Me.LowByteTextBox.TabIndex = 33
+        '
+        'Label10
+        '
+        Me.Label10.AutoSize = True
+        Me.Label10.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label10.Location = New System.Drawing.Point(710, 141)
+        Me.Label10.Name = "Label10"
+        Me.Label10.Size = New System.Drawing.Size(65, 13)
+        Me.Label10.TabIndex = 34
+        Me.Label10.Text = "HIGH BYTE"
+        '
+        'Label11
+        '
+        Me.Label11.AutoSize = True
+        Me.Label11.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label11.Location = New System.Drawing.Point(710, 182)
+        Me.Label11.Name = "Label11"
+        Me.Label11.Size = New System.Drawing.Size(63, 13)
+        Me.Label11.TabIndex = 35
+        Me.Label11.Text = "LOW BYTE"
+        '
+        'CmdTextBox
+        '
+        Me.CmdTextBox.Location = New System.Drawing.Point(692, 75)
+        Me.CmdTextBox.Name = "CmdTextBox"
+        Me.CmdTextBox.Size = New System.Drawing.Size(105, 20)
+        Me.CmdTextBox.TabIndex = 36
+        '
+        'Label12
+        '
+        Me.Label12.AutoSize = True
+        Me.Label12.Font = New System.Drawing.Font("Microsoft Sans Serif", 8.25!, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, CType(0, Byte))
+        Me.Label12.Location = New System.Drawing.Point(710, 100)
+        Me.Label12.Name = "Label12"
+        Me.Label12.Size = New System.Drawing.Size(74, 13)
+        Me.Label12.TabIndex = 37
+        Me.Label12.Text = "HANDSHAKE"
+        '
+        'ClearButton
+        '
+        Me.ClearButton.Location = New System.Drawing.Point(581, 437)
+        Me.ClearButton.Name = "ClearButton"
+        Me.ClearButton.Size = New System.Drawing.Size(105, 45)
+        Me.ClearButton.TabIndex = 38
+        Me.ClearButton.Text = "CLEAR DATA"
+        Me.ClearButton.UseVisualStyleBackColor = True
+        '
         'PIC16F883SerialCommForm
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
-        Me.ClientSize = New System.Drawing.Size(809, 487)
+        Me.ClientSize = New System.Drawing.Size(814, 487)
+        Me.Controls.Add(Me.ClearButton)
+        Me.Controls.Add(Me.Label12)
+        Me.Controls.Add(Me.CmdTextBox)
+        Me.Controls.Add(Me.Label11)
+        Me.Controls.Add(Me.Label10)
+        Me.Controls.Add(Me.LowByteTextBox)
+        Me.Controls.Add(Me.HighByteTextBox)
+        Me.Controls.Add(Me.ADCCheckBox)
+        Me.Controls.Add(Me.Label9)
+        Me.Controls.Add(Me.ADCTextBox)
         Me.Controls.Add(Me.Label8)
         Me.Controls.Add(Me.Label7)
         Me.Controls.Add(Me.Label6)
@@ -267,4 +382,16 @@ Partial Class PIC16F883SerialCommForm
     Friend WithEvents Label6 As Label
     Friend WithEvents Label7 As Label
     Friend WithEvents Label8 As Label
+    Friend WithEvents ADCTimer As Timer
+    Friend WithEvents ADCTextBox As TextBox
+    Friend WithEvents Label9 As Label
+    Friend WithEvents ADCCheckBox As CheckBox
+    Friend WithEvents HighByteTextBox As TextBox
+    Friend WithEvents LowByteTextBox As TextBox
+    Friend WithEvents Label10 As Label
+    Friend WithEvents Label11 As Label
+    Friend WithEvents ReadTimer As Timer
+    Friend WithEvents CmdTextBox As TextBox
+    Friend WithEvents Label12 As Label
+    Friend WithEvents ClearButton As Button
 End Class
